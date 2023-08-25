@@ -4,6 +4,9 @@
 
 [DEMO LINK](https://media-service-frontend-three.vercel.app/)
 
+Attention!
+Backend is deployed to render.com, please, wait a bit befor start to use the app
+
 Enhance your online store's frontend with these key features:
 
 Digital Receipt: Manage your shopping with ease using a digital receipt that keeps track of selected products.
