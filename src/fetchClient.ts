@@ -1,4 +1,4 @@
-export const BASE_URL = "https://media-service-api.onrender.com/api";
+export const BASE_URL = "http://localhost:8080/api";
 
 type RequestMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH';
 
@@ -16,8 +16,6 @@ function request<T>(
   if (data) {
     options.body = JSON.stringify(data);
   }
-
-  console.log(options);
 
   return fetch(BASE_URL + url, options).then((response) => {
     if (!response.ok) {

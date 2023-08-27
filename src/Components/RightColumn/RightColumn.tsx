@@ -25,17 +25,17 @@ export const RightColumn: FC<RightColumnProps> = ({
   fetchData,
 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false); 
-  const sortedProductsInReceipt = [...productsInReceipt].sort((a, b) => a.id - b.id);
+  const sortedProductsInReceipt = [...productsInReceipt].sort((a, b) => a.id - b.id)
+  .filter(product => product.receipt_id === receipt[receipt.length - 1].id);
 
-  const handleClearProducts = async () => {
-    if (productsInReceipt.length) {
+  const handleCloseReceipt = async () => {
+    if (sortedProductsInReceipt.length) {
       const receiptId = receipt[receipt.length - 1].id;
-      const newTotal = productsInReceipt.reduce(
+      const newTotal = sortedProductsInReceipt.reduce(
         (acc: number, product: ProductInReceipt) => acc + parseFloat(product.price),
         0
       );
-    await client.delete('/prodreceiptall', { receipt_id: receiptId, total: newTotal })
-    console.log('All products in receipt cleared.');  
+    await client.post('/prodreceiptall', { receipt_id: receiptId, total: newTotal })
     client.post('/receipt', {});
     fetchData();
     setIsModalVisible(true);
@@ -57,7 +57,7 @@ export const RightColumn: FC<RightColumnProps> = ({
     fetchData();
   };
 
-  const total = productsInReceipt.reduce((acc, productInReceipt) => {
+  const total = sortedProductsInReceipt.reduce((acc, productInReceipt) => {
     const matchedProduct = products.find(product => product.id === productInReceipt.product_id);
     const productPrice = matchedProduct ? parseFloat(matchedProduct.price) : 0;
     const productInReceiptWorth = productPrice * productInReceipt.quantity;
@@ -76,10 +76,9 @@ export const RightColumn: FC<RightColumnProps> = ({
           <TableCell align="left">
             {sortedProductsInReceipt.indexOf(productInReceipt) + 1}
           </TableCell>
-          <TableCell align="left">{productName}</TableCell>
+          <TableCell align="left" title={productName} colSpan={3}>{productName}</TableCell>
           <TableCell align="right" />
-          <TableCell align="center" />
-          <TableCell align="center">
+          <TableCell align="center" colSpan={2}>
             <div className="quantity__container">
               <button
                 className="receipt__button"
@@ -96,7 +95,8 @@ export const RightColumn: FC<RightColumnProps> = ({
               </button>
             </div>
           </TableCell>
-          <TableCell align="center">
+          <TableCell align="center" />
+          <TableCell align="center" colSpan={2}>
             <div className='flex__price'>
             {productInReceipt.quantity}
             &nbsp;
@@ -107,7 +107,7 @@ export const RightColumn: FC<RightColumnProps> = ({
             <p className='total__price'>{productInReceiptWorth.toFixed(2)}</p>
             </div>
           </TableCell>
-          <TableCell align="right">
+          <TableCell align="center">
             <button
               className="receipt__button"
               onClick={() => handleDeleteProduct(productInReceipt.id)}
@@ -115,6 +115,7 @@ export const RightColumn: FC<RightColumnProps> = ({
               ✖
             </button>
           </TableCell>
+          
         </TableRow>
       );
     });
@@ -131,15 +132,15 @@ export const RightColumn: FC<RightColumnProps> = ({
                 <TableCell className="right-column__table-cell" align="left">
                   #
                 </TableCell>
-                <TableCell className="right-column__table-cell" align="left">
+                <TableCell className="right-column__table-cell" align="left" colSpan={3}>
                   Найменування
                 </TableCell>
                 <TableCell className="right-column__table-cell" align="right" />
-                <TableCell className="right-column__table-cell" align="center" />
-                <TableCell className="right-column__table-cell" align="center">
+                <TableCell className="right-column__table-cell" align="center" colSpan={2}>
                   Кількість
                 </TableCell>
-                <TableCell className="right-column__table-cell" align="center">
+                <TableCell className="right-column__table-cell" align="center" />
+                <TableCell className="right-column__table-cell" align="center" colSpan={2}>
                   Вартість
                 </TableCell>
                 <TableCell className="right-column__table-cell" align="center" />
@@ -160,7 +161,7 @@ export const RightColumn: FC<RightColumnProps> = ({
                 <TableCell colSpan={2} className="right-column__total-cell" align="right">
                   <button
                     className="right-column__payment-button"
-                    onClick={handleClearProducts}
+                    onClick={handleCloseReceipt}
                   >
                     Карткою
                   </button>
@@ -169,7 +170,7 @@ export const RightColumn: FC<RightColumnProps> = ({
                 align="left">
                   <button
                     className="right-column__payment-button"
-                    onClick={handleClearProducts}
+                    onClick={handleCloseReceipt}
                   >
                     Готівкою
                   </button>

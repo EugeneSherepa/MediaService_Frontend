@@ -26,39 +26,39 @@ export const TableLeft: FC<Props> = ({
 }) => {
   const [newProduct, setNewProduct] = useState(false);
 
-  const handleProductToReceipt = (id: number, price: number) => {
-      console.log('obeme')
-      const receiptId = receipt[receipt.length - 1].id;
+  const handleProductToReceipt = async (id: number, price: number) => {
+    const receiptId = receipt[receipt.length - 1].id;
   
-      const existingProductIndex = productsInReceipt.findIndex(product => product.product_id === id);
-    
-      if (existingProductIndex !== -1) {
-        const existingProduct = productsInReceipt[existingProductIndex];
-        let newQuantity;
-        if (existingProduct.quantity !== null && existingProduct.quantity !== undefined) {
-          console.log('quatity + 1')
-          newQuantity = existingProduct.quantity + 1;
-        } else {
-          console.log('quantity 1')
-          newQuantity = 1;
-        }
-
-        client.patch('/prodreceipt', { newQuantity, product_id: id });
-        fetchData();
+    const FilteredProductsInReceipt = productsInReceipt.filter(
+      (product) => product.receipt_id === receiptId
+    );
+  
+    const existingProductIndex = FilteredProductsInReceipt.findIndex(
+      (product) => product.product_id === id
+    );
+  
+    if (existingProductIndex !== -1) {
+      const existingProduct = FilteredProductsInReceipt[existingProductIndex];
+      let newQuantity;
+      if (existingProduct.quantity !== null && existingProduct.quantity !== undefined) {
+        newQuantity = existingProduct.quantity + 1;
       } else {
-        const newTotal = productsInReceipt.reduce(
-          (acc: number, product: ProductInReceipt) => acc + parseFloat(product.price),
-          price
-        );
-
-        console.log('newTotal', newTotal)
-
-        client.post('/prodreceipt', { id, receipt_id: receiptId, price });
-
-        client.patch('/receipt', { receipt_id: receiptId, total: newTotal });
-
-        fetchData();
+        newQuantity = 1;
       }
+  
+      await client.patch('/prodreceipt', { newQuantity, product_id: id });
+      fetchData();
+    } else {
+      const newTotal = FilteredProductsInReceipt.reduce(
+        (acc: number, product: ProductInReceipt) => acc + parseFloat(product.price),
+        price
+      );
+  
+      await client.post('/prodreceipt', { id, receipt_id: receiptId, price });
+      await client.patch('/receipt', { receipt_id: receiptId, total: newTotal });
+  
+      fetchData();
+    }
   };
 
   const handleAddProduct = (name: string, price: number) => {
@@ -80,7 +80,7 @@ export const TableLeft: FC<Props> = ({
                     onClick={() => handleProductToReceipt(product.id, parseFloat(product.price))}
                     className="table-row"
                   >
-                    <TableCell align='left'>{product.name}</TableCell>
+                    <TableCell align='left' title={product.name}>{product.name}</TableCell>
                     <TableCell align='right'>{product.price}</TableCell>
                   </TableRow>
                 ))}
