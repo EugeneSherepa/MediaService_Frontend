@@ -1,4 +1,4 @@
-export const BASE_URL = "https://media-service-api.onrender.com";
+export const BASE_URL = "https://media-service-api.onrender.com/api";
 
 type RequestMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH';
 
