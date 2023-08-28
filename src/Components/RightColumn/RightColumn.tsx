@@ -47,8 +47,7 @@ export const RightColumn: FC<RightColumnProps> = ({
   }
 
   const handleProductQuantity = async (newQuantity: number, product_id: number) => {
-    const updatedQuantity = newQuantity >= 0 ? newQuantity : 0;
-    await client.patch('/prodreceipt', { newQuantity: updatedQuantity, product_id });
+    await client.patch('/prodreceipt', { newQuantity, product_id });
     fetchData();
   };
 
