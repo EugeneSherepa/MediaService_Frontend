@@ -15,7 +15,11 @@ interface Props {
   filteredProducts: Product[];
   receipt: Receipt[];
   productsInReceipt: ProductInReceipt[];
-  fetchData: () => void;
+  fetchData: {
+    fetchReceipts: () => void;
+    fetchProducts: () => void;
+    fetchProductsInReceipt: () => void;
+  };
 }
 
 export const TableLeft: FC<Props> = ({ 
@@ -47,7 +51,7 @@ export const TableLeft: FC<Props> = ({
       }
   
       await client.patch('/prodreceipt', { newQuantity, product_id: id });
-      fetchData();
+      fetchData.fetchProductsInReceipt();
     } else {
       const newTotal = FilteredProductsInReceipt.reduce(
         (acc: number, product: ProductInReceipt) => acc + parseFloat(product.price),
@@ -57,14 +61,15 @@ export const TableLeft: FC<Props> = ({
       await client.post('/prodreceipt', { id, receipt_id: receiptId, price });
       await client.patch('/receipt', { receipt_id: receiptId, total: newTotal });
   
-      fetchData();
+      fetchData.fetchProductsInReceipt();
+      fetchData.fetchReceipts();
     }
   };
 
   const handleAddProduct = (name: string, price: number) => {
     client.post('/product', {name, price});
     setNewProduct(false);
-    fetchData();
+    fetchData.fetchProducts();
   }
 
   return (

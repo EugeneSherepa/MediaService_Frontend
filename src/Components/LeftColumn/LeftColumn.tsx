@@ -8,7 +8,11 @@ type Props = {
   receipt: Receipt[];
   productsInReceipt: ProductInReceipt[];
   products: Product[];
-  fetchData: () => void;
+  fetchData: {
+    fetchReceipts: () => void;
+    fetchProducts: () => void;
+    fetchProductsInReceipt: () => void;
+  };
 };
 
 export const LeftColumn: FC<Props> = ({ 

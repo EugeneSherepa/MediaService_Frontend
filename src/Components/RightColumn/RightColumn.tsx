@@ -15,7 +15,11 @@ interface RightColumnProps {
   productsInReceipt: ProductInReceipt[];
   products: Product[];
   receipt: Receipt[];
-  fetchData: () => void;
+  fetchData: {
+    fetchReceipts: () => void;
+    fetchProducts: () => void;
+    fetchProductsInReceipt: () => void;
+  };
 }
 
 export const RightColumn: FC<RightColumnProps> = ({
@@ -37,7 +41,8 @@ export const RightColumn: FC<RightColumnProps> = ({
       );
     await client.post('/prodreceiptall', { receipt_id: receiptId, total: newTotal })
     client.post('/receipt', {});
-    fetchData();
+    fetchData.fetchReceipts();
+    fetchData.fetchProductsInReceipt();
     setIsModalVisible(true);
     }
   }
@@ -48,12 +53,12 @@ export const RightColumn: FC<RightColumnProps> = ({
 
   const handleProductQuantity = async (newQuantity: number, product_id: number) => {
     await client.patch('/prodreceipt', { newQuantity, product_id });
-    fetchData();
+    fetchData.fetchProductsInReceipt();
   };
 
   const handleDeleteProduct = async (id: number) => {
     await client.delete(`/prodreceipt/${id}`, { id });
-    fetchData();
+    fetchData.fetchProductsInReceipt();
   };
 
   const total = sortedProductsInReceipt.reduce((acc, productInReceipt) => {
