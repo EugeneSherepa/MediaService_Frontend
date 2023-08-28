@@ -20,6 +20,9 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onSub
     if (isNaN(parseFloat(newProductPrice))) {
       setPriceValid(false);
       setErrorMessage('Please enter a valid price.');
+    } else if (newProductName.length === 0) {
+      setPriceValid(false);
+      setErrorMessage('Please enter a valid name.');
     } else {
       setPriceValid(true);
       setErrorMessage('');
