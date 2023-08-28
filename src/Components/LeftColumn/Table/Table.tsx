@@ -74,16 +74,22 @@ export const TableLeft: FC<Props> = ({
           <TableContainer component={Paper} className="table-container">
             <Table className="table">
               <TableBody>
-                {filteredProducts.map((product) => (
-                  <TableRow 
-                    key={product.id}
-                    onClick={() => handleProductToReceipt(product.id, parseFloat(product.price))}
-                    className="table-row"
-                  >
-                    <TableCell align='left' title={product.name}>{product.name}</TableCell>
-                    <TableCell align='right'>{product.price}</TableCell>
-                  </TableRow>
-                ))}
+                {filteredProducts.map((product) => {
+                  const normalizedProductName = product.name.length > 20 
+                    ? product.name.slice(0, 20) + '...' 
+                    : product.name;
+                  return (
+                      <TableRow 
+                        key={product.id}
+                        onClick={() => handleProductToReceipt(product.id, parseFloat(product.price))}
+                        className="table-row"
+                        title={product.name}
+                      >
+                        <TableCell align='left'>{normalizedProductName}</TableCell>
+                        <TableCell align='right'>{product.price}</TableCell>
+                      </TableRow>
+                  )
+                })}
               </TableBody>
             </Table>
           </TableContainer>

@@ -47,3 +47,13 @@
     background-color: #0056b3;
   }
 }
+
+.invalid {
+  border: 2px solid red;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}

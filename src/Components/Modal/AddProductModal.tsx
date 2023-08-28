@@ -11,16 +11,30 @@ interface AddProductModalProps {
 export const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onSubmit, newProduct }) => {
   const [newProductName, setNewProductName] = useState('');
   const [newProductPrice, setNewProductPrice] = useState('');
+  const [priceValid, setPriceValid] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleAddProduct = () => {
-    onSubmit(newProductName, parseFloat(newProductPrice));
-    onClose();
+  const handleAddProduct = (event: React.FormEvent<HTMLFormElement>) => {
+    event?.preventDefault();
+
+    if (isNaN(parseFloat(newProductPrice))) {
+      setPriceValid(false);
+      setErrorMessage('Please enter a valid price.');
+    } else {
+      setPriceValid(true);
+      setErrorMessage('');
+      onSubmit(newProductName.trim(), parseFloat(newProductPrice));
+      onClose();
+    }
   };
 
   return (
-    <div className={cn("modal__overlay", {
-      "blur": newProduct,
-    })}>
+    <form 
+      className={cn("modal__overlay", {
+        "blur": newProduct,
+      })}
+      onSubmit={(event) => handleAddProduct(event)}
+    >
       <div className="modal__content newProduct">
         <input
           type="text"
@@ -31,12 +45,17 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onSub
         <input
           type="text"
           value={newProductPrice}
-          onChange={(event) => setNewProductPrice(event.target.value)}
+          onChange={(event) => {
+            setNewProductPrice(event.target.value);
+            setPriceValid(true);
+          }}
           placeholder="Product Price"
+          className={priceValid ? '' : 'invalid'}
         />
-        <button onClick={handleAddProduct}>Add New Product</button>
+        {!priceValid && <p className="error-message">{errorMessage}</p>}
+        <button type="submit">Add New Product</button>
         <button onClick={onClose}>Cancel</button>
       </div>
-    </div>
+    </form>
   );
 };
